@@ -16,6 +16,7 @@
     "outDir": "./lib",
     "declaration": true,
     "downlevelIteration": true,
+    "esModuleInterop": true,
     "lib": [
       "esnext",
       "dom",
