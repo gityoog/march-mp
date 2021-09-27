@@ -43,7 +43,7 @@ export default class MPBase {
       pauseTracking()
       const state = data.$store.end()
 
-      if (this.debug || true) {
+      if (this.debug) {
         console.timeEnd(timeId)
       }
       if (state) {
