@@ -1,2 +1,1 @@
-lib/* linguist-vendored
-@vue_reactivity/* linguist-vendored
+./lib/* linguist-vendored
