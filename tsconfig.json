@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "noImplicitThis": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictFunctionTypes": false,
+    "strictPropertyInitialization": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "resolveJsonModule": true,
+    "allowJs": false,
+    "module": "commonjs",
+    "target": "ES5",
+    "outDir": "./lib",
+    "declaration": true,
+    "downlevelIteration": true,
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable",
+      "ScriptHost"
+    ]
+  },
+  "include": [
+    "src/**/*"
+  ]
+}
