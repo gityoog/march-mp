@@ -4,7 +4,7 @@
   "description": "",
   "author": "",
   "license": "ISC",
-  "main": "./lib/index.js",
+  "main": "./lib/runtime/index.js",
   "scripts": {
     "build": "rimraf ./lib && tsc"
   },
