@@ -12,16 +12,39 @@ const jsonName = 'app.json'
 export default class MPEntryPlugin {
   private name = 'MPEntryPlugin'
   private manager = new EntryManager
+  constructor(private options: {
+    ignore?: Array<string | RegExp>
+  } = {}) {
+
+  }
+
+  private ignore(page: string) {
+    return this.options.ignore?.some(item => {
+      if (typeof item === 'string') {
+        return page === item
+      } else {
+        return item.test(page)
+      }
+    })
+  }
 
   apply(compiler: webpack.Compiler) {
     const context = compiler.context
     const appjson = path.resolve(compiler.context, jsonName)
+
     const appjsonData = JSON.parse(fs.readFileSync(appjson, 'utf8')) as {
       pages?: string[]
       subpackages?: {
         root: string
         pages: string[]
       }[]
+    }
+
+    if (this.options.ignore && this.options.ignore.length > 0) {
+      appjsonData.pages = appjsonData.pages?.filter(page => !this.ignore(page))
+      appjsonData.subpackages?.forEach(({ root, pages }) => {
+        pages = pages.filter(page => !this.ignore(root + '/' + page))
+      })
     }
 
     this.manager.setContext(compiler.context)
