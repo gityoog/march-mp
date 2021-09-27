@@ -1,6 +1,6 @@
 import MPComponent from "./component"
 import MPPage from "./page"
-import { toRaw, markRaw, reactive } from './vue/reactive'
+import { toRaw, markRaw, reactive } from './@vue_reactivity'
 
 const MarchMP = {
   Page: MPPage,

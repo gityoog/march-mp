@@ -1,5 +1,5 @@
 
-import { effect, markRaw, reactive, toRaw, stop, pauseTracking, enableTracking } from "../vue/reactive"
+import { effect, markRaw, reactive, toRaw, stop, pauseTracking, enableTracking } from "../@vue_reactivity"
 import RuntimeStore from './store'
 
 type pageInstance = WechatMiniprogram.Page.Instance<{}, {}>
