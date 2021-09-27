@@ -1,9 +1,10 @@
-import Webpack from 'webpack';
+import webpack from 'webpack';
 export default class ProcessPlugin {
     private options;
     constructor({ process }?: {
         process?: boolean;
     });
     private name;
-    apply(compiler: Webpack.Compiler): void;
+    private done;
+    apply(compiler: webpack.Compiler): void;
 }

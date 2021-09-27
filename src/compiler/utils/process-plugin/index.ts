@@ -1,4 +1,4 @@
-import Webpack from 'webpack'
+import webpack from 'webpack'
 import { stdout } from 'single-line-log'
 
 export default class ProcessPlugin {
@@ -9,18 +9,21 @@ export default class ProcessPlugin {
     }
   }
   private name = 'ProcessPlugin'
-  apply(compiler: Webpack.Compiler) {
+  private done = false
+  apply(compiler: webpack.Compiler) {
     if (this.options.process) {
-      new Webpack.ProgressPlugin(
+      new webpack.ProgressPlugin(
         (percent, msg, module) => {
-          stdout((percent * 100).toFixed(0) + '% ' + msg + ' ' + (module || '') + '\n')
+          !this.done && stdout((percent * 100).toFixed(0) + '% ' + msg + ' ' + (module || '') + '\n')
         }
       ).apply(compiler)
     }
     compiler.hooks.compile.tap(this.name, () => {
+      this.done = false
       console.log('Building ...')
     })
     compiler.hooks.done.tap(this.name, stats => {
+      this.done = true
       if (stats.hasErrors()) {
         console.log(stats.toString({
           all: false,
