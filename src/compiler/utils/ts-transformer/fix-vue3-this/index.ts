@@ -56,11 +56,11 @@ const fixVue3This: ts.TransformerFactory<ts.SourceFile> = (context) => {
               ts.factory.createAsExpression(
                 ts.factory.createPropertyAccessExpression(
                   ts.factory.createCallExpression(
-                    ts.createIdentifier('require'),
+                    ts.factory.createIdentifier('require'),
                     undefined,
-                    [ts.createStringLiteral('@vue/reactivity')]
+                    [ts.factory.createStringLiteral('march-mp/lib/runtime')]
                   ),
-                  ts.createIdentifier('reactive')
+                  ts.factory.createIdentifier('reactive')
                 ),
                 ts.factory.createFunctionTypeNode([
                   ts.factory.createTypeParameterDeclaration('T')
