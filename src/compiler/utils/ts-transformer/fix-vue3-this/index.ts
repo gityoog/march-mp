@@ -58,7 +58,7 @@ const fixVue3This: ts.TransformerFactory<ts.SourceFile> = (context) => {
                   ts.factory.createCallExpression(
                     ts.factory.createIdentifier('require'),
                     undefined,
-                    [ts.factory.createStringLiteral('march-mp/lib/runtime')]
+                    [ts.factory.createStringLiteral('march-mp')]
                   ),
                   ts.factory.createIdentifier('reactive')
                 ),
