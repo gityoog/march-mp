@@ -3,6 +3,7 @@ import * as t from '@babel/types'
 import generate from '@babel/generator'
 import State from "../../state"
 
+// todo 修改为排除原则
 export default function genData(path: NodePath<t.Expression>, state: State) {
   (path.parentPath || path).traverse({
     /**
