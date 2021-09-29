@@ -146,7 +146,7 @@ function renameComponent(origin: string) {
 }
 
 function isData(path: NodePath<t.Node>) {
-  return path.isBinaryExpression() || path.isMemberExpression() || path.isIdentifier() || path.isTemplateLiteral()
+  return path.isBinaryExpression() || path.isMemberExpression() || (path.isIdentifier() && path.node.name !== 'undefined') || path.isTemplateLiteral()
 }
 
 export function isMapCallExpression(node: t.CallExpression) {
