@@ -3,9 +3,9 @@ export default class MPEntryPlugin {
     private options;
     private name;
     private manager;
+    private app;
     constructor(options?: {
         ignore?: Array<string | RegExp>;
     });
-    private ignore;
     apply(compiler: webpack.Compiler): void;
 }
