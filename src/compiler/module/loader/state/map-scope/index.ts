@@ -1,6 +1,7 @@
 import { NodePath } from '@babel/traverse'
 import * as t from '@babel/types'
 
+// todo index重复问题
 export default class MapScope {
   private data: [string, string, string[]][] = []
   private dict: Record<string, string[]> = {}
