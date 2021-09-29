@@ -46,6 +46,9 @@ export default class AppData {
         pages = pages.filter(page => !this.ignore(root + '/' + page))
       })
     }
+    this.source = new webpack.sources.CachedSource(
+      new webpack.sources.RawSource(JSON.stringify(data, null, 2))
+    )
     data.pages?.forEach(item => {
       this.entries.push({
         path: path.resolve(this.context, item + '.tsx')
@@ -66,9 +69,6 @@ export default class AppData {
     }
     if (this.content !== content) {
       this.content = content
-      this.source = new webpack.sources.CachedSource(
-        new webpack.sources.RawSource(JSON.stringify(this.content, null, 2))
-      )
       this.update()
     }
     return this.entries
