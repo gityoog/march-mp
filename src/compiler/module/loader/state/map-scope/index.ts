@@ -1,7 +1,6 @@
 import { NodePath } from '@babel/traverse'
 import * as t from '@babel/types'
 
-// todo index重复问题
 export default class MapScope {
   private data: [string, string, string[]][] = []
   private dict: Record<string, string[]> = {}
@@ -15,20 +14,32 @@ export default class MapScope {
       throw path.buildCodeFrameError('Map only support ArrowFunctionExpression')
     }
     const params = arrowFn.node.params
-    if (!params[0]) {
-      params.push(path.scope.generateUidIdentifier('t'))
-    }
-    if (!params[1]) {
-      params.push(path.scope.generateUidIdentifier('i'))
-    }
-    if (!t.isIdentifier(params[0]) || !t.isIdentifier(params[1])) {
+    let item = params[0]
+    let index = params[1]
+    if ((item && !t.isIdentifier(item)) || (index && !t.isIdentifier(index))) {
       throw path.buildCodeFrameError('Map params only support Identifier')
     }
-    this.push(params[0].name, params[1].name, parent)
+    if (!item) {
+      item = path.scope.generateUidIdentifier('t')
+      params.push(item)
+    }
+    if (!index) {
+      index = path.scope.generateUidIdentifier('i')
+      params.push(index)
+    } else {
+      const name = index.name
+      if (this.has(name)) {
+        path.scope.rename(name)
+      }
+    }
+    this.push(item.name, index.name, parent)
   }
   exit() {
     this.data.pop()
     this.update()
+  }
+  private has(id: string) {
+    return this.getIndex(id) !== undefined
   }
   private getIndex(id: string): string[] | undefined {
     return this.dict[id]
@@ -47,8 +58,8 @@ export default class MapScope {
       const indexs = new Set<string>()
       path.traverse({
         Identifier: item => {
-          const name = item.node.name
           if (t.isReferenced(item.node, item.parent)) {
+            const name = item.node.name
             if (item.scope.getBinding(name) === path.parentPath!.scope.getBinding(name)) {
               this.getIndex(name)?.forEach(index => {
                 indexs.add(index)

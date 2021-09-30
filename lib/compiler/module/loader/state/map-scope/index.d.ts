@@ -6,6 +6,7 @@ export default class MapScope {
     private push;
     enter(path: NodePath<t.CallExpression>, parent: string[]): void;
     exit(): void;
+    private has;
     private getIndex;
     private update;
     getScope(path: NodePath): string[];
