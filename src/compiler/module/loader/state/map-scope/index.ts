@@ -29,7 +29,7 @@ export default class MapScope {
     } else {
       const name = index.name
       if (this.has(name)) {
-        path.scope.rename(name)
+        arrowFn.scope.rename(name)
       }
     }
     this.push(item.name, index.name, parent)
