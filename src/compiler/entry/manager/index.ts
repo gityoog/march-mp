@@ -2,6 +2,11 @@ import EntryData from '../data'
 import EntryNameCache from '../name'
 import generateEntry from './generate'
 
+type oldData = {
+  path: string
+  name: string
+}
+
 export default class EntryManager {
   data: EntryData[] = []
   private nameCache = new EntryNameCache
@@ -9,6 +14,15 @@ export default class EntryManager {
     path: string
     root?: string
   }[] = []
+  private oldComponents: oldData[] = []
+  private oldDict: Record<string, oldData> = {}
+
+  load(callback: (item: oldData) => void) {
+    this.oldComponents.forEach(callback)
+  }
+  needLoad(data: EntryData) {
+    return !data.isPage && !this.oldDict[data.name]
+  }
   addPage(path: string, root?: string) {
     const name = this.nameCache.get({ path, root })
     this.pages.push({
@@ -38,6 +52,18 @@ export default class EntryManager {
           components
         })
       })
+  }
+  complete() {
+    this.oldComponents = this.data.filter(item => !item.isPage).map(item => ({
+      path: item.path,
+      name: item.name
+    }))
+    const dict: Record<string, oldData> = {}
+    this.oldComponents.forEach(item => {
+      dict[item.name] = item
+    })
+    this.oldDict = dict
+    this.clear()
   }
   clear() {
     this.pages = []

@@ -32,6 +32,11 @@ export default class MPEntryPlugin {
                 import: [path]
               }
             })
+            this.manager.load(({ name, path }) => {
+              result[name] = {
+                import: [path]
+              }
+            })
             return reslove(result)
           }
         )
@@ -43,8 +48,8 @@ export default class MPEntryPlugin {
       compilation.hooks.finishModules.tapPromise(this.name, async () => {
         this.manager.generate()
         for (const data of this.manager.data) {
-          await new Promise<void>((resolve, reject) => {
-            if (!data.isPage) {
+          if (this.manager.needLoad(data)) {
+            await new Promise<void>((resolve, reject) => {
               compilation.addEntry(
                 context,
                 EntryPlugin.createDependency(data.path, data.name),
@@ -54,10 +59,8 @@ export default class MPEntryPlugin {
                   resolve()
                 }
               )
-            } else {
-              resolve()
-            }
-          })
+            })
+          }
         }
       })
       compilation.hooks.beforeChunkAssets.tap(this.name, () => {
@@ -69,6 +72,7 @@ export default class MPEntryPlugin {
         if (this.app.source) {
           compilation.emitAsset('app.json', this.app.source)
         }
+        this.manager.complete()
       })
     })
 
