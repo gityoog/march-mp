@@ -35,5 +35,7 @@ export default class State {
         scope: t.BinaryExpression | t.Identifier | undefined;
         name: string;
     };
+    warning: Error[];
+    addWarning(warn: Error): void;
     destroy(): void;
 }

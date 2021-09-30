@@ -16,12 +16,21 @@ export default function (this: LoaderContext<null>, source: string) {
     data.setJSON(state.json)
 
     for (const file of state.cssfile) {
-      const { module, err } = await loadModule(this, file)
+      const { source, err } = await new Promise<{
+        source: string
+        err?: Error | null
+      }>((reslove) => {
+        this.loadModule(file, (err, source) => {
+          reslove({
+            err,
+            source
+          })
+        })
+      })
       if (err) {
         this.emitError(err)
         continue
       }
-      const source = module.originalSource()?.source().toString()
       if (source) {
         data.addWXSS(JSON.parse(source))
       }
@@ -50,6 +59,7 @@ export default function (this: LoaderContext<null>, source: string) {
         state.setComponentNative(name)
       }
     }
+    state.warning.forEach(warn => this.emitWarning(warn))
     const code = state.generate()
     state.destroy()
     return code

@@ -7,7 +7,7 @@ import PropIdentifier from "./identifier/prop"
 export default class State {
   debug = false
   constructor(filename: string) {
-    // this.debug = filename === 'D:\\desktop\\smart-webpack\\src\\miniprogram\\project\\康居集团工地长制智慧巡查系统\\pages\\index\\index.tsx'
+
   }
   json: any = {}
   cssfile: string[] = []
@@ -94,6 +94,13 @@ export default class State {
     return { scope, name }
   }
 
+
+  warning: Error[] = []
+
+  addWarning(warn: Error) {
+    this.warning.push(warn)
+  }
+
   destroy() {
     this.mapScope.destroy()
     this.identifier.destroy()
@@ -102,6 +109,7 @@ export default class State {
     this.callbacks = null!
     this.generator = null!
     this.components = null!
+    this.warning = null!
     this.cssfile = null!
   }
 }
