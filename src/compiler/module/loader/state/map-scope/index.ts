@@ -28,6 +28,7 @@ export default class MapScope {
       params.push(index)
     } else {
       const name = index.name
+      // 重复的index重命名
       if (this.has(name)) {
         arrowFn.scope.rename(name)
       }
@@ -80,6 +81,7 @@ export default class MapScope {
     return result
   }
   destroy() {
-
+    this.data = null!
+    this.dict = null!
   }
 }
