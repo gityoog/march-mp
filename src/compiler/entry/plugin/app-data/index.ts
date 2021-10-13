@@ -6,7 +6,6 @@ export default class AppData {
   path = ''
   context = ''
   source: webpack.sources.Source | null = null
-
   setContext(context: string) {
     this.context = context
     this.path = path.resolve(context, this.name)
@@ -29,15 +28,21 @@ export default class AppData {
   private entries: {
     root?: string
     path: string
+    independent?: boolean
   }[] = []
   private content: string = ''
+  private roots: string[] = []
+  private independents = new Set<string>()
   private update() {
     this.entries = []
+    this.roots = []
+    this.independents.clear()
     const data = JSON.parse(this.content) as {
       pages?: string[]
       subpackages?: {
         root: string
         pages: string[]
+        independent?: boolean
       }[]
     }
     if (this.ignorePattern.length > 0) {
@@ -54,11 +59,14 @@ export default class AppData {
         path: path.resolve(this.context, item + '.tsx')
       })
     })
-    data.subpackages?.forEach(({ root, pages }) => {
+    data.subpackages?.forEach(({ root, pages, independent }) => {
+      this.roots.push(root)
+      independent && this.independents.add(root)
       pages.forEach(item => {
         this.entries.push({
           root,
-          path: path.resolve(this.context, root, item + '.tsx')
+          path: path.resolve(this.context, root, item + '.tsx'),
+          independent
         })
       })
     })
@@ -72,5 +80,11 @@ export default class AppData {
       this.update()
     }
     return this.entries
+  }
+  getRoots() {
+    return this.roots
+  }
+  isIndependent(root: string) {
+    return this.independents.has(root)
   }
 }

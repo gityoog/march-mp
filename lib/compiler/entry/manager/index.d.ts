@@ -7,15 +7,14 @@ export default class EntryManager {
     data: EntryData[];
     private nameCache;
     private pages;
-    private oldComponents;
-    private oldDict;
-    load(callback: (item: oldData) => void): void;
-    needLoad(data: EntryData): false;
-    addPage(path: string, root?: string): string;
+    private loaded;
+    loadOld(callback: (item: oldData) => void): void;
+    needLoad(data: EntryData): boolean;
+    addPage(path: string, root?: string, independent?: boolean): string;
     getRoot(name: string): string | undefined;
     setContext(context: string): void;
+    getNotUsed(): string[];
     generate(): void;
-    complete(): void;
     clear(): void;
 }
 export {};

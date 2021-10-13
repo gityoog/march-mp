@@ -4,6 +4,7 @@ import EntryManager from '../manager'
 import RequireChunkPlugin from './require-chunk-plugin'
 import SplitPackagePlugin from './split-package-plugin'
 import AppData from './app-data'
+import path from 'path'
 
 export default class MPEntryPlugin {
   private name = 'MPEntryPlugin'
@@ -26,13 +27,13 @@ export default class MPEntryPlugin {
             if (err) return reject(err)
             if (!content) return reject('获取入口信息失败')
             const result: Record<string, {}> = {}
-            this.app.getEntries(content).forEach(({ root, path }) => {
-              const name = this.manager.addPage(path, root)
+            this.manager.loadOld(({ name, path }) => {
               result[name] = {
                 import: [path]
               }
             })
-            this.manager.load(({ name, path }) => {
+            this.app.getEntries(content).forEach(({ root, path, independent }) => {
+              const name = this.manager.addPage(path, root, independent)
               result[name] = {
                 import: [path]
               }
@@ -44,6 +45,17 @@ export default class MPEntryPlugin {
     }).apply(compiler)
 
     compiler.hooks.compilation.tap(this.name, (compilation) => {
+      webpack.javascript.JavascriptModulesPlugin.getCompilationHooks(compilation).renderMain.tap(this.name, (source, renderContext) => {
+        if (renderContext.chunk.hasRuntime()) {
+          const globalObject = compilation.outputOptions.globalObject
+          return new webpack.sources.RawSource(
+            source.source().toString()
+              .replace(`var __webpack_modules__ = `, `var __webpack_modules__ = ${globalObject}['__webpack_modules__'] = ${globalObject}['__webpack_modules__'] || `)
+              .replace(`var __webpack_module_cache__ = `, `var __webpack_module_cache__ = ${globalObject}['__webpack_module_cache__'] = ${globalObject}['__webpack_module_cache__'] || `)
+          )
+        }
+        return source
+      })
       compilation.fileDependencies.add(this.app.path)
       compilation.hooks.finishModules.tapPromise(this.name, async () => {
         this.manager.generate()
@@ -70,9 +82,13 @@ export default class MPEntryPlugin {
           })
         })
         if (this.app.source) {
-          compilation.emitAsset('app.json', this.app.source)
+          compilation.emitAsset(this.app.name, this.app.source)
         }
-        this.manager.complete()
+      })
+      compilation.hooks.additionalAssets.tap(this.name, () => {
+        this.manager.getNotUsed().forEach(name => {
+          compilation.deleteAsset(name)
+        })
       })
     })
 
@@ -87,11 +103,25 @@ export default class MPEntryPlugin {
     }).apply(compiler)
 
     new optimize.RuntimeChunkPlugin({
-      name: 'runtime.js'
+      name: ({ name }: { name: string }) => {
+        const root = this.manager.getRoot(name)
+        if (root && this.app.isIndependent(root)) {
+          return path.join(root, 'runtime.js')
+        }
+        return 'runtime.js'
+      }
     }).apply(compiler)
 
     new SplitPackagePlugin({
-      getRoot: name => this.manager.getRoot(name)
+      getRoot: name => this.manager.getRoot(name),
+      getRoots: () => this.app.getRoots(),
+      isIndependent: name => {
+        const root = this.manager.getRoot(name)
+        if (root) {
+          return this.app.isIndependent(root)
+        }
+        return false
+      }
     }).apply(compiler)
 
     new RequireChunkPlugin().apply(compiler)

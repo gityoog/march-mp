@@ -9,6 +9,7 @@ type node = {
 type page = {
   path: string
   root?: string
+  independent?: boolean
 }
 
 function generateNodes(pages: page[]) {
@@ -74,8 +75,8 @@ export default function generateEntry(pages: page[], getName: (params: { path: s
 
   const data: entry[] = []
   let dict: Record<string, Record<string, entry>> = {}
-  const getEntry = (path: string, root?: string) => {
-    const pack = packageSet[path].has(undefined) ? undefined : root
+  const getEntry = (path: string, root?: string, independent: boolean = false) => {
+    const pack = packageSet[path].has(undefined) && !independent ? undefined : root
     const rootEntry = dict[pack || ''] = dict[pack || ''] || {}
     if (!rootEntry[path]) {
       data.push(
@@ -90,24 +91,33 @@ export default function generateEntry(pages: page[], getName: (params: { path: s
     }
     return rootEntry[path]
   }
-  const load = (node: node) => {
+  const load = (node: node, independentRoot?: string) => {
     const packages = getPackages(node)
+    if (independentRoot) {
+      packages.delete(independentRoot)
+    }
     const entries = packages.has(undefined) ? [getEntry(node.path)] : [...packages].map(root => getEntry(node.path, root))
+    if (independentRoot) {
+      entries.push(
+        getEntry(node.path, independentRoot, true)
+      )
+    }
     for (const key in node.children) {
       const child = node.children[key]
-      load(child)
+      load(child, independentRoot)
       entries.forEach(entry => {
-        entry.components[key] = getEntry(child.path, entry.root)
+        entry.components[key] = getEntry(child.path, entry.root, !!independentRoot)
       })
     }
     return entries
   }
 
   pages.forEach(page => {
-    load(refs[page.path]).forEach(entry => {
+    load(refs[page.path], page.independent ? page.root! : undefined).forEach(entry => {
       entry.page = true
     })
   })
+
   data.forEach(item => {
     item.name = getName({
       path: item.path,

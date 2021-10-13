@@ -1,6 +1,7 @@
 declare type page = {
     path: string;
     root?: string;
+    independent?: boolean;
 };
 declare type entry = {
     path: string;

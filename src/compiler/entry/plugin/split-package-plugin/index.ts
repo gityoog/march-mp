@@ -1,17 +1,31 @@
-import webpack from 'webpack'
+import webpack, { ChunkGraph, web } from 'webpack'
 import path from 'path'
 
 export default class SplitPackagePlugin {
   name = 'SplitPackagePlugin'
   constructor(private options: {
     getRoot(name: string): string | undefined
+    getRoots(): string[]
+    isIndependent(name: string): boolean
   }) { }
+  packages: any[] = []
   apply(compiler: webpack.Compiler) {
+    compiler.hooks.compilation.tap(this.name, (compilation) => {
+      compilation.hooks.afterOptimizeModules.tap(this.name, () => {
+        this.packages = this.options.getRoots().map(root => {
+          return {
+            name: path.join(root, 'common.js'),
+            chunks: (chunk: { name: string }) => this.options.getRoot(chunk.name) === root,
+            minChunks: 2,
+            priority: 5
+          }
+        })
+      })
+    })
     new webpack.optimize.SplitChunksPlugin({
-      minSize: 0,
-      minChunks: 999,
       maxAsyncRequests: Infinity,
       maxInitialRequests: Infinity,
+      minSize: 0,
       cacheGroups: {
         common: {
           test: (module: webpack.Module, { chunkGraph }: { chunkGraph: webpack.ChunkGraph }) => {
@@ -19,38 +33,35 @@ export default class SplitPackagePlugin {
           },
           name: 'common.js',
           minChunks: 2,
-          chunks: 'all'
+          chunks: chunk => !this.options.isIndependent(chunk.name),
+          priority: 10
         },
-        // packages: {
-        //   test: (module: webpack.Module, { chunkGraph }: { chunkGraph: webpack.ChunkGraph }) => {
-        //     return chunkGraph.getModuleChunks(module).every(chunk => this.options.getRoot(chunk.name) !== undefined)
-        //   },
-        //   name: (module: webpack.Module, chunks: webpack.Chunk[]) => {
-        //     return path.join(this.options.getRoot(chunks[0].name)!, 'common.js')
-        //   },
-        //   minChunks: 2,
-        //   chunks: 'all'
-        // }
-        packages: (module: webpack.Module, chunkGraph: webpack.ChunkGraph) => {
-          const chunks = module.getChunks()
-          const packages = new Set<string>()
-          const options: any[] = []
-          chunks.forEach(chunk => {
-            const result = this.options.getRoot(chunk.name)
-            if (result) {
-              packages.add(result)
-            }
-          })
-          for (const lib of packages) {
-            options.push({
-              name: path.join(lib, 'common.js'),
-              chunks: (chunk: { name: string }) => this.options.getRoot(chunk.name) === lib,
-              minChunks: 2
-            })
-          }
-          return options
+        packages: () => {
+          return this.packages
         }
       }
+      // {
+      //   default: false,
+      //   common: {
+      //     test: (module: webpack.Module, { chunkGraph }: { chunkGraph: webpack.ChunkGraph }) => {
+      //       return chunkGraph.getModuleChunks(module).some(chunk => this.options.getRoot(chunk.name) === undefined)
+      //     },
+      //     name: 'common.js',
+      //     minChunks: 2,
+      //     chunks: chunk => !this.options.isIndependent(chunk.name)
+      //   },
+      //   packages: (module: webpack.Module, { chunkGraph }: { chunkGraph: webpack.ChunkGraph }) => {
+      //     console.log('packages')
+      //     return this.options.getRoots().map(root => ({
+      //       test: (module: webpack.Module, { chunkGraph }: { chunkGraph: webpack.ChunkGraph }) => {
+      //         return chunkGraph.getModuleChunks(module).some(chunk => this.options.getRoot(chunk.name) === root)
+      //       },
+      //       name: path.join(root, 'common.js'),
+      //       minChunks: 2,
+      //       chunks: (chunk: webpack.Chunk) => this.options.getRoot(chunk.name) === root
+      //     }))
+      //   }
+      // }
     }).apply(compiler)
   }
 }

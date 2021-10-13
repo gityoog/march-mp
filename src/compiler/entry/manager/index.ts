@@ -13,20 +13,30 @@ export default class EntryManager {
   private pages: {
     path: string
     root?: string
+    independent?: boolean
   }[] = []
-  private oldComponents: oldData[] = []
-  private oldDict: Record<string, oldData> = {}
+  private loaded = new Set<string>()
 
-  load(callback: (item: oldData) => void) {
-    this.oldComponents.forEach(callback)
+  loadOld(callback: (item: oldData) => void) {
+    this.loaded.clear()
+    this.data
+      .filter(item => !item.isPage)
+      .forEach(item => {
+        this.loaded.add(item.name)
+        callback({
+          path: item.path,
+          name: item.name
+        })
+      })
+    this.clear()
   }
   needLoad(data: EntryData) {
-    return !data.isPage && !this.oldDict[data.name]
+    return !data.isPage && !this.loaded.has(data.name)
   }
-  addPage(path: string, root?: string) {
+  addPage(path: string, root?: string, independent?: boolean) {
     const name = this.nameCache.get({ path, root })
     this.pages.push({
-      path, root
+      path, root, independent
     })
     return name
   }
@@ -35,6 +45,16 @@ export default class EntryManager {
   }
   setContext(context: string) {
     this.nameCache.setContext(context)
+  }
+  getNotUsed() {
+    const used = new Set(this.data.map(item => item.name))
+    const notUsed: string[] = []
+    this.loaded.forEach(name => {
+      if (!used.has(name)) {
+        notUsed.push(name)
+      }
+    })
+    return notUsed
   }
   generate() {
     this.data = generateEntry(this.pages, (params: { path: string, root?: string, component?: boolean }) => {
@@ -52,18 +72,6 @@ export default class EntryManager {
           components
         })
       })
-  }
-  complete() {
-    this.oldComponents = this.data.filter(item => !item.isPage).map(item => ({
-      path: item.path,
-      name: item.name
-    }))
-    const dict: Record<string, oldData> = {}
-    this.oldComponents.forEach(item => {
-      dict[item.name] = item
-    })
-    this.oldDict = dict
-    this.clear()
   }
   clear() {
     this.pages = []

@@ -11,9 +11,14 @@ export default class AppData {
     private ignore;
     private entries;
     private content;
+    private roots;
+    private independents;
     private update;
     getEntries(content: string | Buffer): {
         root?: string | undefined;
         path: string;
+        independent?: boolean | undefined;
     }[];
+    getRoots(): string[];
+    isIndependent(root: string): boolean;
 }
