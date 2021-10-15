@@ -5,6 +5,7 @@ import RequireChunkPlugin from './require-chunk-plugin'
 import SplitPackagePlugin from './split-package-plugin'
 import AppData from './app-data'
 import path from 'path'
+import { repalceAll } from '../utils'
 
 export default class MPEntryPlugin {
   private name = 'MPEntryPlugin'
@@ -45,6 +46,21 @@ export default class MPEntryPlugin {
     }).apply(compiler)
 
     compiler.hooks.compilation.tap(this.name, (compilation) => {
+      webpack.javascript.JavascriptModulesPlugin.getCompilationHooks(compilation).renderChunk.tap(this.name, (source, { chunk, chunkGraph }) => {
+        for (const module of chunkGraph.getChunkEntryModulesIterable(chunk)) {
+          if (chunkGraph.getModuleChunks(module).length > 1) {
+            const root = this.manager.getRoot(chunk.name)
+            const moduleId = chunkGraph.getModuleId(module)
+            if (root) {
+              return new webpack.sources.RawSource(
+                repalceAll(source.source().toString(), JSON.stringify(moduleId), JSON.stringify(moduleId + '!' + root))
+              )
+            }
+          }
+        }
+        return source
+      })
+
       webpack.javascript.JavascriptModulesPlugin.getCompilationHooks(compilation).renderMain.tap(this.name, (source, renderContext) => {
         if (renderContext.chunk.hasRuntime()) {
           const globalObject = compilation.outputOptions.globalObject
