@@ -8,3 +8,9 @@ export function genEntryName({ root, path, context, component = false }: { root?
       .replace(/\.\.[\\/]/g, '@').replace(/\.[\\/]/g, '')
   ).replace(/\.tsx$/, '.js')
 }
+
+export function repalceAll(str: string, substr: string, newSubStr: string) {
+  return str.replace(
+    new RegExp(substr.replace(/([\|\.\^\$\*\+\?\\\/])/g, '\\$1'), 'g'), newSubStr
+  )
+}
