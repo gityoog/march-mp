@@ -4,9 +4,9 @@
   "description": "",
   "author": "",
   "license": "ISC",
-  "main": "./lib/runtime/index.js",
+  "main": "./dist/runtime/index.js",
   "scripts": {
-    "build": "rimraf ./lib && tsc -p ./src/runtime/tsconfig.json && tsc -p ./src/compiler/tsconfig.json"
+    "build": "rimraf ./dist && tsc -p ./src/runtime/tsconfig.json && tsc -p ./src/compiler/tsconfig.json"
   },
   "dependencies": {
     "@babel/generator": "^7.15.0",

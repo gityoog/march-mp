@@ -1,6 +1,5 @@
 .DS_Store
 node_modules/
-dist/
 old_code/
 
 # Editor directories and files
