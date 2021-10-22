@@ -4,67 +4,64 @@ $ npm install git+https://github.com/gityoog/march-mp.git --save
 ```
 ## 构建
 - 构建打包工具只支持 `webpack > 5.0`
-  <details>
-    <summary>基础配置</summary>
-    ```ts
-    import MPEntryPlugin, { tsxLoader, fixVue3This } from 'march-mp/dist/compiler'
-    const config = {
-      output: {
-        clean: true,
-        filename: '[name]',
-        globalObject: 'wx'
-      },
-      context: path.resolve(__dirname, '源码目录'), // 重要, 小程序使用的app.json等文件需要在该目录下
-      target: ['web', 'es5'], 
-      entry: {
-        'app.js': './app.ts' // app.js 入口
-      },
-      resolve: {
-        extensions: [".ts", ".js", ".tsx"]
-      },
-      module: {
-        rules: [
+```
+import MPEntryPlugin, { tsxLoader, fixVue3This } from 'march-mp/dist/compiler'
+const config = {
+  output: {
+    clean: true,
+    filename: '[name]',
+    globalObject: 'wx'
+  },
+  context: path.resolve(__dirname, '源码目录'), // 重要, 小程序使用的app.json等文件需要在该目录下
+  target: ['web', 'es5'], 
+  entry: {
+    'app.js': './app.ts' // app.js 入口
+  },
+  resolve: {
+    extensions: [".ts", ".js", ".tsx"]
+  },
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: [
           {
-            test: /\.tsx?$/,
-            use: [
-              {
-                loader: 'ts-loader',
-                options: {
-                  getCustomTransformers: () => ({
-                    before: [fixVue3This] // 可选, proxy在构造函数内异步使用this时为原始对象, 无法触发响应
-                  })
-                  // ...more
-                }
-              }
-            ]
-          },
-          {
-            test: /.tsx$/,
-            use: tsxLoader  // 页面和组件tsx编译
-          },
-          {
-            test: /\.scss$/,
-            use: [
-              {
-                loader: valueLoader // 输出wxss需要
-              }
+            loader: 'ts-loader',
+            options: {
+              getCustomTransformers: () => ({
+                before: [fixVue3This] // 可选, proxy在构造函数内异步使用this时为原始对象, 无法触发响应
+              })
               // ...more
-            ]
+            }
           }
         ]
       },
-      // 优化关闭, 插件内部会载入
-      optimization: {
-        runtimeChunk: false,
-        splitChunks: false
+      {
+        test: /.tsx$/,
+        use: tsxLoader  // 页面和组件tsx编译
       },
-      plugins: [
-        new MPEntryPlugin() // 分包, 输出, 拷贝等
-      ]
-      // ...more
-    }
-    ```
-  </details>
+      {
+        test: /\.scss$/,
+        use: [
+          {
+            loader: valueLoader // 输出wxss需要
+          }
+          // ...more
+        ]
+      }
+    ]
+  },
+  // 优化关闭, 插件内部会载入
+  optimization: {
+    runtimeChunk: false,
+    splitChunks: false
+  },
+  plugins: [
+    new MPEntryPlugin() // 分包, 输出, 拷贝等
+  ]
+  // ...more
+}
+```
 
 ## 使用
 ### 1.页面示例
