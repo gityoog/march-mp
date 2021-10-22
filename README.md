@@ -7,10 +7,7 @@ $ npm install git+https://github.com/gityoog/march-mp.git --save
   <details>
     <summary>基础配置</summary>
     ```ts
-    // 基础配置
-
     import MPEntryPlugin, { tsxLoader, fixVue3This } from 'march-mp/dist/compiler'
-
     const config = {
       output: {
         clean: true,
