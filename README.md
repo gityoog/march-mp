@@ -6,7 +6,7 @@ $ npm install git+https://github.com/gityoog/march-mp.git --save
 - 构建打包工具只支持 `webpack > 5.0`
   <details>
     <summary>基础配置</summary>
-    ```ts
+    \```ts
     // 基础配置
 
     import MPEntryPlugin, { tsxLoader, fixVue3This } from 'march-mp/dist/compiler'
@@ -66,7 +66,7 @@ $ npm install git+https://github.com/gityoog/march-mp.git --save
       ]
       // ...more
     }
-    ```
+    \```
     </details>
 
 ## 使用
