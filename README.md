@@ -41,6 +41,13 @@
 ```
 $ npm install git+https://github.com/gityoog/march-mp.git --save
 ```
+
+- 或者 <a href="https://github.com/gityoog/march-mp-example.git">示例项目</a>
+
+``` 
+$ git clone https://github.com/gityoog/march-mp-example.git
+```
+
 ## 构建
 <details >
   <summary>webpack 基础配置说明 (version > 5.0)</summary>
@@ -231,8 +238,3 @@ export default class TestComponent extends MarchMP.Component<{
  - 自定义组件无需声明类型 ts可自行推导
  - 原生标签如 `button`,`image` 等需要自行声明类型, 也可导入 <a href="https://github.com/gityoog/march-mp-example/tree/master/src/typings">示例项目内</a> 的声明文件
  - 原生自定义组件需自行声明组件属性文件
-## 示例
-``` 
-$ git clone https://github.com/gityoog/march-mp-example.git
-```
-- <a href="https://github.com/gityoog/march-mp-example.git">示例项目</a>
