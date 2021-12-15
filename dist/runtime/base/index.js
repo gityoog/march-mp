@@ -23,6 +23,9 @@ var MPBase = /** @class */ (function () {
         });
         var proxyData = (0, _vue_reactivity_1.reactive)(data);
         var reffect = (0, _vue_reactivity_1.effect)(function () {
+            if (!data.$store) {
+                return;
+            }
             var timeId = instance.is + Math.random();
             if (_this.debug) {
                 console.time(timeId);
@@ -106,6 +109,7 @@ var MPBase = /** @class */ (function () {
         this.$destoryCallback = [];
         this.$readyCallback = [];
         this.$store.destroy();
+        this.$store = null;
     };
     /**编译后覆盖 render函数 */
     MPBase.prototype.render = function (genProp, genEvent) { };

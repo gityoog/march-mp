@@ -23,6 +23,9 @@ export default class MPBase {
     })
     const proxyData = reactive(data) as T
     const reffect = effect(() => {
+      if (!data.$store) {
+        return
+      }
       const timeId = instance.is + Math.random()
       if (this.debug) {
         console.time(timeId)
@@ -112,6 +115,7 @@ export default class MPBase {
     this.$destoryCallback = []
     this.$readyCallback = []
     this.$store.destroy()
+    this.$store = null!
   }
 
   /**编译后覆盖 render函数 */
