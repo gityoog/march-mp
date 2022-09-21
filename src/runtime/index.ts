@@ -7,6 +7,11 @@ const MarchMP = {
   Component: MPComponent,
 }
 
+namespace MarchMP {
+  export type Page = MPPage
+  export type Component = MPComponent
+}
+
 export {
   MPPage,
   MPComponent,

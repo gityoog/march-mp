@@ -41,7 +41,7 @@ var DiffState = /** @class */ (function () {
             var hasNext = children.length > 0;
             if (!result.dict[key]) {
                 var data_1 = {
-                    name: typeof key === 'number' ? "[" + key + "]" : "." + key,
+                    name: typeof key === 'number' ? "[".concat(key, "]") : ".".concat(key),
                     path: key,
                     dict: hasNext ? {} : null,
                     children: hasNext ? [] : null,

@@ -15,7 +15,7 @@ const fixVue3This = (context) => {
         sourceFile = typescript_1.default.visitEachChild(sourceFile, node => {
             if (node.kind === typescript_1.default.SyntaxKind.ClassDeclaration) {
                 return typescript_1.default.visitEachChild(node, node => {
-                    if (node.kind === typescript_1.default.SyntaxKind.Constructor || node.kind === typescript_1.default.SyntaxKind.PropertyDeclaration) {
+                    if (typescript_1.default.isConstructorDeclaration(node) || typescript_1.default.isPropertyDeclaration(node)) {
                         return (0, util_1.traverse)(node, {
                             enter: node => {
                                 if (node.kind === typescript_1.default.SyntaxKind.ArrowFunction) {
@@ -26,13 +26,13 @@ const fixVue3This = (context) => {
                                 }
                                 else if (state.isInArrow()) {
                                     state.active(node);
-                                    if ((0, util_1.isBinaryExpression)(node) && node.operatorToken.kind === typescript_1.default.SyntaxKind.FirstAssignment) {
+                                    if (typescript_1.default.isBinaryExpression(node) && node.operatorToken.kind === typescript_1.default.SyntaxKind.FirstAssignment) {
                                         state.add(node.left);
                                     }
-                                    else if ((0, util_1.isCallExpression)(node)) {
+                                    else if (typescript_1.default.isCallExpression(node)) {
                                         state.add(node.expression);
                                     }
-                                    else if (state.isActived() && (0, util_1.isPropertyAccessExpression)(node) && node.expression.kind === typescript_1.default.SyntaxKind.ThisKeyword) {
+                                    else if (state.isActived() && typescript_1.default.isPropertyAccessExpression(node) && node.expression.kind === typescript_1.default.SyntaxKind.ThisKeyword) {
                                         return context.factory.updatePropertyAccessExpression(node, context.factory.createCallExpression(state.identifier, [], [node.expression]), node.name);
                                     }
                                 }
@@ -55,9 +55,9 @@ const fixVue3This = (context) => {
         if (state.isChanged()) {
             return (0, util_1.addStatement)(sourceFile, typescript_1.default.factory.createVariableStatement(undefined, typescript_1.default.factory.createVariableDeclarationList([
                 typescript_1.default.factory.createVariableDeclaration(state.identifier, undefined, undefined, typescript_1.default.factory.createAsExpression(typescript_1.default.factory.createPropertyAccessExpression(typescript_1.default.factory.createCallExpression(typescript_1.default.factory.createIdentifier('require'), undefined, [typescript_1.default.factory.createStringLiteral('march-mp')]), typescript_1.default.factory.createIdentifier('reactive')), typescript_1.default.factory.createFunctionTypeNode([
-                    typescript_1.default.factory.createTypeParameterDeclaration('T')
+                    typescript_1.default.factory.createTypeParameterDeclaration(undefined, 'T')
                 ], [
-                    typescript_1.default.factory.createParameterDeclaration(undefined, undefined, undefined, 'data', undefined, typescript_1.default.factory.createTypeReferenceNode("T"))
+                    typescript_1.default.factory.createParameterDeclaration(undefined, undefined, 'data', undefined, typescript_1.default.factory.createTypeReferenceNode("T"))
                 ], typescript_1.default.factory.createTypeReferenceNode("T"))))
             ], typescript_1.default.NodeFlags.Const)));
         }

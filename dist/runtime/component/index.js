@@ -76,7 +76,7 @@ var MPComponent = /** @class */ (function (_super) {
                         method.apply(data, [newValue, oldValue]);
                     }
                     else {
-                        console.error("observer method " + obMethodName + " is not exist");
+                        console.error("observer method ".concat(obMethodName, " is not exist"));
                     }
                 }
             };

@@ -413,13 +413,13 @@ var readonlyHandlers = {
     ownKeys: ownKeys,
     set: function (target, key) {
         {
-            console.warn("Set operation on key \"" + String(key) + "\" failed: target is readonly.", target);
+            console.warn("Set operation on key \"".concat(String(key), "\" failed: target is readonly."), target);
         }
         return true;
     },
     deleteProperty: function (target, key) {
         {
-            console.warn("Delete operation on key \"" + String(key) + "\" failed: target is readonly.", target);
+            console.warn("Delete operation on key \"".concat(String(key), "\" failed: target is readonly."), target);
         }
         return true;
     }
@@ -586,8 +586,8 @@ function createReadonlyMethod(type) {
             args[_i] = arguments[_i];
         }
         {
-            var key = args[0] ? "on key \"" + args[0] + "\" " : "";
-            console.warn(capitalize(type) + " operation " + key + "failed: target is readonly.", toRaw(this));
+            var key = args[0] ? "on key \"".concat(args[0], "\" ") : "";
+            console.warn("".concat(capitalize(type), " operation ").concat(key, "failed: target is readonly."), toRaw(this));
         }
         return type === "delete" /* DELETE */ ? false : this;
     };
@@ -674,8 +674,8 @@ function checkIdentityKeys(target, has, key) {
     var rawKey = toRaw(key);
     if (rawKey !== key && has.call(target, rawKey)) {
         var type = toRawType(target);
-        console.warn("Reactive " + type + " contains both the raw and reactive " +
-            ("versions of the same object" + (type === "Map" ? "as keys" : "") + ", ") +
+        console.warn("Reactive ".concat(type, " contains both the raw and reactive ") +
+            "versions of the same object".concat(type === "Map" ? "as keys" : "", ", ") +
             "which can lead to inconsistencies. " +
             "Avoid differentiating between the raw and reactive versions " +
             "of an object and only use the reactive version if possible.");
@@ -718,7 +718,7 @@ exports.shallowReadonly = shallowReadonly;
 function createReactiveObject(target, isReadonly, baseHandlers, collectionHandlers) {
     if (!isObject(target)) {
         {
-            console.warn("value cannot be made reactive: " + String(target));
+            console.warn("value cannot be made reactive: ".concat(String(target)));
         }
         return target;
     }

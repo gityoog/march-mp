@@ -1,6 +1,6 @@
 import ts from 'typescript'
 import FixThisState from './state'
-import { traverse, isBinaryExpression, isCallExpression, isPropertyAccessExpression, addStatement } from '../util'
+import { traverse, addStatement } from '../util'
 
 const fixVue3This: ts.TransformerFactory<ts.SourceFile> = (context) => {
   return sourceFile => {
@@ -11,7 +11,7 @@ const fixVue3This: ts.TransformerFactory<ts.SourceFile> = (context) => {
     sourceFile = ts.visitEachChild(sourceFile, node => {
       if (node.kind === ts.SyntaxKind.ClassDeclaration) {
         return ts.visitEachChild(node, node => {
-          if (node.kind === ts.SyntaxKind.Constructor || node.kind === ts.SyntaxKind.PropertyDeclaration) {
+          if (ts.isConstructorDeclaration(node) || ts.isPropertyDeclaration(node)) {
             return traverse(node, {
               enter: node => {
                 if (node.kind === ts.SyntaxKind.ArrowFunction) {
@@ -20,13 +20,13 @@ const fixVue3This: ts.TransformerFactory<ts.SourceFile> = (context) => {
                   return node
                 } else if (state.isInArrow()) {
                   state.active(node)
-                  if (isBinaryExpression(node) && node.operatorToken.kind === ts.SyntaxKind.FirstAssignment) {
+                  if (ts.isBinaryExpression(node) && node.operatorToken.kind === ts.SyntaxKind.FirstAssignment) {
                     state.add(node.left)
                   }
-                  else if (isCallExpression(node)) {
+                  else if (ts.isCallExpression(node)) {
                     state.add(node.expression)
                   }
-                  else if (state.isActived() && isPropertyAccessExpression(node) && node.expression.kind === ts.SyntaxKind.ThisKeyword) {
+                  else if (state.isActived() && ts.isPropertyAccessExpression(node) && node.expression.kind === ts.SyntaxKind.ThisKeyword) {
                     return context.factory.updatePropertyAccessExpression(node, context.factory.createCallExpression(state.identifier, [], [node.expression as ts.ThisExpression]), node.name)
                   }
                 }
@@ -63,9 +63,9 @@ const fixVue3This: ts.TransformerFactory<ts.SourceFile> = (context) => {
                   ts.factory.createIdentifier('reactive')
                 ),
                 ts.factory.createFunctionTypeNode([
-                  ts.factory.createTypeParameterDeclaration('T')
+                  ts.factory.createTypeParameterDeclaration(undefined, 'T')
                 ], [
-                  ts.factory.createParameterDeclaration(undefined, undefined, undefined, 'data', undefined, ts.factory.createTypeReferenceNode("T"))
+                  ts.factory.createParameterDeclaration(undefined, undefined, 'data', undefined, ts.factory.createTypeReferenceNode("T"))
                 ], ts.factory.createTypeReferenceNode("T"))
               )
             )
