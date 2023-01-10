@@ -42,6 +42,8 @@
 ## 安装
 
 ```
+$ npm install march-mp --save
+# or
 $ npm install git+https://github.com/gityoog/march-mp.git --save
 ```
 
