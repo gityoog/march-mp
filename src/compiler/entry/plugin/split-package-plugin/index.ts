@@ -29,11 +29,11 @@ export default class SplitPackagePlugin {
       cacheGroups: {
         common: {
           test: (module: webpack.Module, { chunkGraph }: { chunkGraph: webpack.ChunkGraph }) => {
-            return chunkGraph.getModuleChunks(module).some(chunk => this.options.getRoot(chunk.name) === undefined)
+            return chunkGraph.getModuleChunks(module).some(chunk => this.options.getRoot(chunk.name!) === undefined)
           },
           name: 'common.js',
           minChunks: 2,
-          chunks: chunk => !this.options.isIndependent(chunk.name),
+          chunks: chunk => !this.options.isIndependent(chunk.name!),
           priority: 10
         },
         packages: () => {

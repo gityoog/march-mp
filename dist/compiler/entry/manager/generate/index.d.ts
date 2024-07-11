@@ -1,9 +1,9 @@
-declare type page = {
+type page = {
     path: string;
     root?: string;
     independent?: boolean;
 };
-declare type entry = {
+type entry = {
     path: string;
     root?: string;
     page: boolean;

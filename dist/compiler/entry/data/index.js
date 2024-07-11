@@ -7,14 +7,6 @@ const data_1 = __importDefault(require("../../module/data"));
 const webpack_1 = __importDefault(require("webpack"));
 const lodash_merge_1 = __importDefault(require("lodash.merge"));
 class EntryData {
-    constructor({ name, path, page, components }) {
-        this.sourceCache = {};
-        this.path = path;
-        this.name = name;
-        this.isPage = page;
-        this.components = components;
-        this.module = data_1.default.Pick(path);
-    }
     getSource(type, code) {
         var _a;
         if (((_a = this.sourceCache[type]) === null || _a === void 0 ? void 0 : _a.code) === code) {
@@ -27,6 +19,14 @@ class EntryData {
             };
             return this.sourceCache[type].source;
         }
+    }
+    constructor({ name, path, page, components }) {
+        this.sourceCache = {};
+        this.path = path;
+        this.name = name;
+        this.isPage = page;
+        this.components = components;
+        this.module = data_1.default.Pick(path);
     }
     getUsingComponents() {
         const components = {};

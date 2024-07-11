@@ -1,5 +1,5 @@
 import EntryData from '../data';
-declare type oldData = {
+type oldData = {
     path: string;
     name: string;
 };

@@ -23,7 +23,7 @@ export default class MPEntryPlugin {
 
     new DynamicEntryPlugin(context, async () => {
       return new Promise((reslove, reject) => {
-        compiler.inputFileSystem.readFile(
+        compiler.inputFileSystem!.readFile(
           this.app.path, (err, content) => {
             if (err) return reject(err)
             if (!content) return reject('获取入口信息失败')
@@ -49,7 +49,7 @@ export default class MPEntryPlugin {
       webpack.javascript.JavascriptModulesPlugin.getCompilationHooks(compilation).renderChunk.tap(this.name, (source, { chunk, chunkGraph }) => {
         for (const module of chunkGraph.getChunkEntryModulesIterable(chunk)) {
           if (chunkGraph.getModuleChunks(module).length > 1) {
-            const root = this.manager.getRoot(chunk.name)
+            const root = this.manager.getRoot(chunk.name!)
             const moduleId = chunkGraph.getModuleId(module)
             if (root) {
               return new webpack.sources.RawSource(

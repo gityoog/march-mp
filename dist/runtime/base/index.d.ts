@@ -1,7 +1,7 @@
 import RuntimeStore from './store';
-declare type pageInstance = WechatMiniprogram.Page.Instance<{}, {}>;
-declare type componentInstance = WechatMiniprogram.Component.Instance<{}, {}, {}>;
-declare type wxInstance = pageInstance | componentInstance;
+type pageInstance = WechatMiniprogram.Page.Instance<{}, {}>;
+type componentInstance = WechatMiniprogram.Component.Instance<{}, {}, {}>;
+type wxInstance = pageInstance | componentInstance;
 export default class MPBase {
     static debug: boolean;
     static dataMap: WeakMap<wxInstance, MPBase>;

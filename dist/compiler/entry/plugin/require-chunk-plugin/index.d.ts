@@ -1,5 +1,5 @@
 import webpack from 'webpack';
-declare type options = {
+type options = {
     calcPath: (entry: webpack.Chunk, chunk: webpack.Chunk) => string;
     addPath: (paths: string[]) => string;
 };

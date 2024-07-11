@@ -12,7 +12,7 @@ export default class RequireChunkPlugin {
   constructor(options: Partial<options> = {}) {
     this.options = {
       calcPath: options.calcPath || ((entry, chunk) => {
-        return EnsurePosixPath(path.relative(path.dirname(entry.name), chunk.name))
+        return EnsurePosixPath(path.relative(path.dirname(entry.name!), chunk.name!))
       }),
       addPath: options.addPath || ((paths) => paths.map(path => `require("${path.replace(/\\/g, '\/')}");`).join('\n') + '\n')
     }

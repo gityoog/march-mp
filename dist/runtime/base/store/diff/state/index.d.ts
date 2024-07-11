@@ -1,8 +1,8 @@
-declare type result = {
+type result = {
     dict: Record<string, data> | null;
     children: data[] | null;
 };
-declare type data = {
+type data = {
     name: string;
     path: string;
     length: number;

@@ -46,7 +46,7 @@ function transformEffect(render) {
                 const attrs = path.node.openingElement.attributes
                     .reduce((res, item) => {
                     if (t.isJSXAttribute(item) && t.isJSXExpressionContainer(item.value) && !t.isJSXEmptyExpression(item.value.expression)) {
-                        if (t.isJSXIdentifier(item.name) && !/^data-/.test(item.name.name)) {
+                        if (t.isJSXNamespacedName(item.name) || (t.isJSXIdentifier(item.name) && !/^data-/.test(item.name.name))) {
                             res.push(item.value.expression);
                         }
                     }

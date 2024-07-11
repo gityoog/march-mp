@@ -1,14 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class ModuleData {
-    constructor(path) {
-        this.path = path;
-        this.json = {};
-        this.wxml = '';
-        this.wxss = '';
-        this.wxs = '';
-        this.children = {};
-    }
     static Init(path) {
         const origin = this.map.get(path);
         if (origin) {
@@ -27,6 +19,14 @@ class ModuleData {
             throw new Error('module data not exist: ' + path);
         }
         return data;
+    }
+    constructor(path) {
+        this.path = path;
+        this.json = {};
+        this.wxml = '';
+        this.wxss = '';
+        this.wxs = '';
+        this.children = {};
     }
     setJSON(json) {
         this.json = json;
