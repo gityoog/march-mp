@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var _vue_reactivity_1 = require("../@vue_reactivity");
+var reactivity_1 = require("../reactivity");
 var store_1 = require("./store");
 var MPBase = /** @class */ (function () {
     function MPBase() {
@@ -15,14 +15,14 @@ var MPBase = /** @class */ (function () {
             enumerable: false,
             configurable: false,
             get: function () {
-                return (0, _vue_reactivity_1.markRaw)(instance);
+                return reactivity_1.default.markRaw(instance);
             }
         });
         data.$onReady(function () {
             callback === null || callback === void 0 ? void 0 : callback();
         });
-        var proxyData = (0, _vue_reactivity_1.reactive)(data);
-        var reffect = (0, _vue_reactivity_1.effect)(function () {
+        var proxyData = reactivity_1.default.reactive(data);
+        var stop = reactivity_1.default.effect(function (pause, resume) {
             if (!data.$store) {
                 return;
             }
@@ -34,7 +34,7 @@ var MPBase = /** @class */ (function () {
             proxyData.render(
             // prop 构建
             function (value, key, native) {
-                data.$store.addProp(key, (0, _vue_reactivity_1.toRaw)(value), native);
+                data.$store.addProp(key, reactivity_1.default.toRaw(value), native);
                 return value;
             }, 
             // event 构建
@@ -42,25 +42,32 @@ var MPBase = /** @class */ (function () {
                 data.$store.addEvent(Array.isArray(key) ? key.join('.') : key, fn);
                 return fn;
             });
-            (0, _vue_reactivity_1.pauseTracking)();
-            var state = data.$store.end();
-            if (_this.debug) {
-                console.timeEnd(timeId);
-            }
-            if (state) {
+            pause();
+            try {
+                var state = data.$store.end();
                 if (_this.debug) {
-                    console.log(instance.is, state);
+                    console.timeEnd(timeId);
                 }
-                instance.setData(state, function () {
-                    if (!data.$ready) {
-                        data.$setReady();
+                if (state) {
+                    if (_this.debug) {
+                        console.log(instance.is, state);
                     }
-                });
+                    instance.setData(state, function () {
+                        if (!data.$ready) {
+                            data.$setReady();
+                        }
+                    });
+                }
             }
-            (0, _vue_reactivity_1.enableTracking)();
+            catch (e) {
+                throw e;
+            }
+            finally {
+                resume();
+            }
         });
         data.$destoryCallback.push(function () {
-            (0, _vue_reactivity_1.stop)(reffect);
+            stop();
         });
         return this.bindData(instance, proxyData);
     };
@@ -72,7 +79,7 @@ var MPBase = /** @class */ (function () {
         return this.dataMap.get(instance);
     };
     MPBase.getRawData = function (instance) {
-        return (0, _vue_reactivity_1.toRaw)(this.getData(instance));
+        return reactivity_1.default.toRaw(this.getData(instance));
     };
     MPBase.destory = function (instance) {
         this.getData(instance).$destory();

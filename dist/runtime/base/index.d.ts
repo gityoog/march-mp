@@ -8,7 +8,7 @@ export default class MPBase {
     static init<T extends MPBase>(instance: wxInstance, data: T, callback?: () => void): T;
     static bindData<T extends MPBase>(instance: wxInstance, data: T): T;
     static getData(instance: wxInstance): MPBase;
-    static getRawData(instance: wxInstance): any;
+    static getRawData(instance: wxInstance): MPBase;
     static destory(instance: wxInstance): void;
     static initEventsMethods(events: string[]): Record<string, (...args: any[]) => void>;
     protected $store: RuntimeStore;

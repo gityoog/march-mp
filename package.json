@@ -1,6 +1,6 @@
 {
   "name": "march-mp",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "",
   "author": "gityoog",
   "repository": {
@@ -19,7 +19,8 @@
     "@babel/types": "^7.15.0",
     "copy-webpack-plugin": "^9.0.1",
     "ensure-posix-path": "^1.1.1",
-    "lodash.merge": "^4.6.2"
+    "lodash.merge": "^4.6.2",
+    "vue-reactivity": "^1.0.3"
   },
   "devDependencies": {
     "@types/babel__generator": "^7.6.3",
