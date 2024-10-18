@@ -1,6 +1,6 @@
 import MPComponent from "./component"
 import MPPage from "./page"
-import { toRaw, markRaw, reactive } from './@vue_reactivity'
+import Reactivity from "./reactivity"
 
 const MarchMP = {
   Page: MPPage,
@@ -12,12 +12,21 @@ namespace MarchMP {
   export type Component = MPComponent
 }
 
+export function toRaw<T extends object>(data: T): T {
+  return Reactivity.toRaw(data)
+}
+
+export function markRaw<T extends object>(data: T): T {
+  return Reactivity.markRaw(data)
+}
+
+export function reactive<T extends object>(data: T): T {
+  return Reactivity.reactive(data)
+}
+
 export {
   MPPage,
-  MPComponent,
-  toRaw,
-  markRaw,
-  reactive
+  MPComponent
 }
 
 export default MarchMP

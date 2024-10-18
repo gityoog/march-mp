@@ -1,5 +1,5 @@
 
-import { effect, markRaw, reactive, toRaw, stop, pauseTracking, enableTracking } from "../@vue_reactivity"
+import Reactivity from '../reactivity'
 import RuntimeStore from './store'
 
 type pageInstance = WechatMiniprogram.Page.Instance<{}, {}>
@@ -15,14 +15,14 @@ export default class MPBase {
       enumerable: false,
       configurable: false,
       get() {
-        return markRaw(instance)
+        return Reactivity.markRaw(instance)
       }
     })
     data.$onReady(() => {
       callback?.()
     })
-    const proxyData = reactive(data) as T
-    const reffect = effect(() => {
+    const proxyData = Reactivity.reactive(data) as T
+    const stop = Reactivity.effect((pause, resume) => {
       if (!data.$store) {
         return
       }
@@ -34,7 +34,7 @@ export default class MPBase {
       proxyData.render(
         // prop 构建
         (value, key, native) => {
-          data.$store.addProp(key, toRaw(value), native)
+          data.$store.addProp(key, Reactivity.toRaw(value), native)
           return value
         },
         // event 构建
@@ -43,26 +43,30 @@ export default class MPBase {
           return fn
         }
       )
-      pauseTracking()
-      const state = data.$store.end()
-
-      if (this.debug) {
-        console.timeEnd(timeId)
-      }
-      if (state) {
+      pause()
+      try {
+        const state = data.$store.end()
         if (this.debug) {
-          console.log(instance.is, state)
+          console.timeEnd(timeId)
         }
-        instance.setData(state, () => {
-          if (!data.$ready) {
-            data.$setReady()
+        if (state) {
+          if (this.debug) {
+            console.log(instance.is, state)
           }
-        })
+          instance.setData(state, () => {
+            if (!data.$ready) {
+              data.$setReady()
+            }
+          })
+        }
+      } catch (e) {
+        throw e
+      } finally {
+        resume()
       }
-      enableTracking()
     })
     data.$destoryCallback.push(() => {
-      stop(reffect)
+      stop()
     })
     return this.bindData(instance, proxyData)
   }
@@ -74,7 +78,7 @@ export default class MPBase {
     return this.dataMap.get(instance)!
   }
   static getRawData(instance: wxInstance) {
-    return toRaw(this.getData(instance))
+    return Reactivity.toRaw(this.getData(instance))
   }
   static destory(instance: wxInstance) {
     this.getData(instance).$destory()
