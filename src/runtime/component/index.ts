@@ -106,7 +106,7 @@ export default class MPComponent<
       enumerable: false,
       writable: true,
       configurable: true,
-      value: {}
+      value: Reactivity.reactive({})
     })
   }
 
