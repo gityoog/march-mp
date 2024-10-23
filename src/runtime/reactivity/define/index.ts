@@ -1,5 +1,5 @@
 import Reactivity from ".."
-import { reactive, watchEffect, pushTarget, popTarget, toRaw, markRaw } from 'vue-reactivity'
+import { reactive, watchEffect, pushTarget, popTarget, toRaw, markRaw, set } from 'vue-reactivity'
 
 const DefineReactivity: Reactivity = {
   reactive<T extends object>(data: T): T {
@@ -15,6 +15,9 @@ const DefineReactivity: Reactivity = {
   },
   markRaw<T extends object>(data: T): T {
     return markRaw(data) as T
+  },
+  set<T extends object, K extends keyof T>(data: T, key: K, value: T[K]): void {
+    set(data, key as string, value)
   }
 }
 

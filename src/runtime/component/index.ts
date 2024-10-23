@@ -1,4 +1,5 @@
 import MPBase from "../base"
+import Reactivity from "../reactivity"
 import { isMPDataReady, originMPData } from "../utils"
 
 type componentInstance = WechatMiniprogram.Component.Instance<{}, {}, {}>
@@ -7,7 +8,7 @@ export default class MPComponent<
   T extends object = {},
   /**有默认值的组件参数名称, 默认值请申明在static propsDefault中*/
   P extends keyof T = never
-  > extends MPBase {
+> extends MPBase {
 
   /**组件数据监控 { 字段名称: 运行的组件方法名称 } */
   static observers: Record<string, string> = {};
@@ -51,7 +52,8 @@ export default class MPComponent<
         if (oldValue === newValue) {
           return
         }
-        data.$props[key] = newValue
+        Reactivity.set(data.$props, key, newValue)
+        // data.$props[key] = newValue
         if (obMethodName) {
           // 运行监控数据映射的函数
           const method = (<any>data)[obMethodName]

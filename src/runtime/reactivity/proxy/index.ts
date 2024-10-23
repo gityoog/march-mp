@@ -18,6 +18,9 @@ const ProxyReactivity: Reactivity = {
   },
   markRaw<T extends object>(data: T): T {
     return markRaw(data) as T
+  },
+  set<T extends object, K extends keyof T>(data: T, key: K, value: T[K]): void {
+    data[key] = value
   }
 }
 

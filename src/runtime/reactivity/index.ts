@@ -6,6 +6,7 @@ interface Reactivity {
   effect(callback: (pause: () => void, resume: () => void) => void): () => void
   toRaw<T>(data: T): T
   markRaw<T extends object>(data: T): T
+  set<T extends object, K extends keyof T>(data: T, key: K, value: T[K]): void
 }
 
 const proxy = ProxyReactivity
@@ -28,6 +29,9 @@ const Reactivity = {
   },
   markRaw<T extends object>(data: T): T {
     return actived.markRaw(data)
+  },
+  set<T extends object, K extends keyof T>(data: T, key: K, value: T[K]): void {
+    actived.set(data, key, value)
   }
 }
 
