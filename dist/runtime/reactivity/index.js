@@ -20,6 +20,9 @@ var Reactivity = {
     },
     markRaw: function (data) {
         return actived.markRaw(data);
+    },
+    set: function (data, key, value) {
+        actived.set(data, key, value);
     }
 };
 exports.default = Reactivity;

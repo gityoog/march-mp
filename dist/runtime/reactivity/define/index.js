@@ -15,6 +15,9 @@ var DefineReactivity = {
     },
     markRaw: function (data) {
         return (0, vue_reactivity_1.markRaw)(data);
+    },
+    set: function (data, key, value) {
+        (0, vue_reactivity_1.set)(data, key, value);
     }
 };
 exports.default = DefineReactivity;

@@ -27,6 +27,7 @@ var __assign = (this && this.__assign) || function () {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var base_1 = require("../base");
+var reactivity_1 = require("../reactivity");
 var utils_1 = require("../utils");
 var MPComponent = /** @class */ (function (_super) {
     __extends(MPComponent, _super);
@@ -68,7 +69,8 @@ var MPComponent = /** @class */ (function (_super) {
                 if (oldValue === newValue) {
                     return;
                 }
-                data.$props[key] = newValue;
+                reactivity_1.default.set(data.$props, key, newValue);
+                // data.$props[key] = newValue
                 if (obMethodName) {
                     // 运行监控数据映射的函数
                     var method = data[obMethodName];

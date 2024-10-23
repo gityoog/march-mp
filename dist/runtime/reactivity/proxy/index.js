@@ -18,6 +18,9 @@ var ProxyReactivity = {
     },
     markRaw: function (data) {
         return (0, _vue_reactivity_1.markRaw)(data);
+    },
+    set: function (data, key, value) {
+        data[key] = value;
     }
 };
 exports.default = ProxyReactivity;
