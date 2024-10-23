@@ -38,7 +38,7 @@ var MPComponent = /** @class */ (function (_super) {
             enumerable: false,
             writable: true,
             configurable: true,
-            value: {}
+            value: reactivity_1.default.reactive({})
         });
         return _this;
     }
