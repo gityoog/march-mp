@@ -92,7 +92,7 @@ export default class MPBase {
         const data = self.getData(this)
         const dataset = event.currentTarget.dataset
         const key = dataset[name] !== undefined ? [name, dataset[name]].join('.') : name
-        data.$store.runEvent(key, event.detail)
+        data.$store.runEvent(key, event.detail, event)
       }
     })
     return methods

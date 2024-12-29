@@ -31,8 +31,8 @@ export default class RuntimeStore {
     this.events[key] = fn
   }
 
-  runEvent(key: string, arg: any) {
-    this.events[key].call(null, arg)
+  runEvent(key: string, arg: any, event: Event.Base<Record<string, Function>, void>) {
+    this.events[key].call(null, arg, event)
   }
 
   /**框架组件属性代理 */
