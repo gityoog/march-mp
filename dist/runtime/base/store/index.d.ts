@@ -5,7 +5,7 @@ export default class RuntimeStore {
     end(): Record<string, any> | undefined;
     private events;
     addEvent(key: string, fn: any): void;
-    runEvent(key: string, arg: any): void;
+    runEvent(key: string, arg: any, event: Event.Base<Record<string, Function>, void>): void;
     /**框架组件属性代理 */
     private propRecord;
     private propProxy;

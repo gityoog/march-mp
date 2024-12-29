@@ -36,8 +36,8 @@ var RuntimeStore = /** @class */ (function () {
     RuntimeStore.prototype.addEvent = function (key, fn) {
         this.events[key] = fn;
     };
-    RuntimeStore.prototype.runEvent = function (key, arg) {
-        this.events[key].call(null, arg);
+    RuntimeStore.prototype.runEvent = function (key, arg, event) {
+        this.events[key].call(null, arg, event);
     };
     RuntimeStore.prototype.proxyProp = function (value, key) {
         var k = Array.isArray(key) ? key.join('_') : key;

@@ -93,7 +93,7 @@ var MPBase = /** @class */ (function () {
                 var data = self.getData(this);
                 var dataset = event.currentTarget.dataset;
                 var key = dataset[name] !== undefined ? [name, dataset[name]].join('.') : name;
-                data.$store.runEvent(key, event.detail);
+                data.$store.runEvent(key, event.detail, event);
             };
         });
         return methods;
